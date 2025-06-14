@@ -1,0 +1,5 @@
+Django>=3.2,<4.0
+djangorestframework>=3.12,<4.0
+Pillow>=8.0,<9.0
+psycopg2-binary>=2.9,<3.0  # If using PostgreSQL
+django-browser-reload
