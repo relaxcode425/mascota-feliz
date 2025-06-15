@@ -1,0 +1,42 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Panel de {{ tipo_usuario|title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Bienvenido, {{ user.username }}</h2>
+
+  {% if tipo_usuario == 'cliente' %}
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title">Reservar servicio</h5>
+            <p class="card-text">Reserva atención veterinaria o estética.</p>
+            <a href="{% url 'reservar_servicio' %}" class="btn btn-primary">Reservar</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title">Fichas médicas</h5>
+            <p class="card-text">Consulta fichas de tus mascotas.</p>
+            <a href="" class="btn btn-secondary">Ver fichas</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  {% elif tipo_usuario == 'veterinario' %}
+    <p>Panel con acceso a fichas, recetas y servicios veterinarios.</p>
+
+  {% elif tipo_usuario == 'recepcion' %}
+    <p>Panel para gestionar reservas, fichas y registros.</p>
+
+  {% else %}
+    <p>Panel genérico o en construcción para el tipo: {{ tipo_usuario }}</p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Confirmar Reserva{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Confirmar reserva</h2>
+
+  <ul class="list-group mb-4">
+    <li class="list-group-item"><strong>Tipo de servicio:</strong> {{ datos.tipo_servicio }}</li>
+    <li class="list-group-item"><strong>Tipo de reserva:</strong> {{ datos.tipo_reserva }}</li>
+    <li class="list-group-item"><strong>Fecha:</strong> {{ datos.fecha }}</li>
+    <li class="list-group-item"><strong>Hora:</strong> {{ datos.hora }}</li>
+  </ul>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success">Confirmar</button>
+    <a href="{% url 'reservar_servicio' %}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

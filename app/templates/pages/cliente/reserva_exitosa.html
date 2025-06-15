@@ -1,0 +1,11 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Reserva Exitosa{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+  <h2 class="text-success">¡Reserva realizada con éxito!</h2>
+  <p>Revisa tu panel para más detalles.</p>
+  <a href="{% url 'panel' %}" class="btn btn-primary">Volver al panel</a>
+</div>
+{% endblock %}

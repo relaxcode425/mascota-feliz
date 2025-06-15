@@ -1,0 +1,33 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Reservar Servicio{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Reservar servicio</h2>
+
+  <form method="post" action="#">
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label class="form-label">Tipo de servicio:</label>
+      <select name="tipo_servicio" class="form-select" required>
+        <option value="">Seleccione</option>
+        <option value="veterinario">Veterinario</option>
+        <option value="estetico">Estético</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Tipo de reserva:</label>
+      <select name="tipo_reserva" class="form-select" required>
+        <option value="">Seleccione</option>
+        <option value="presencial">Presencial</option>
+        <option value="domicilio">A domicilio</option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Continuar</button>
+  </form>
+</div>
+{% endblock %}

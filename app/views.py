@@ -1,6 +1,116 @@
+
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect
+from django.utils import timezone
+from datetime import timedelta, datetime
+from core.models import *
+
+""" ------------------------------------------------------------------ """
 
 # Create your views here.
 def index(request):
     context = {}
     return render(request, "pages/index.html", context)
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('panel')  # redirige siempre al panel único
+        else:
+            messages.error(request, 'Credenciales inválidas')
+    return render(request, 'pages/login.html')
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
+""" ------------------------------------------------------------------ """
+#Panel seún usuario
+
+@login_required
+def panel_principal(request):
+    tipo = request.user.tipo_usuario
+    return render(request, 'pages/panel_general.html', {'tipo_usuario': tipo})
+
+""" ------------------------------------------------------------------ """
+# funcionalidades cliente
+
+@login_required
+def reservar_servicio(request):
+    if request.user.tipo_usuario != 'cliente':
+        return HttpResponseForbidden("Acceso denegado.")
+
+    if request.method == 'POST':
+        tipo_servicio = request.POST.get('tipo_servicio')
+        tipo_reserva = request.POST.get('tipo_reserva')
+
+        if tipo_servicio and tipo_reserva:
+            # Guardar selección temporalmente (en sesión)
+            request.session['reserva_datos'] = {
+                'tipo_servicio': tipo_servicio,
+                'tipo_reserva': tipo_reserva,
+            }
+            return redirect('seleccionar_fecha')
+
+    return render(request, 'pages/cliente/reservar.html')
+
+def seleccionar_fecha(request):
+    if request.user.tipo_usuario != 'cliente':
+        return HttpResponseForbidden("Acceso denegado.")
+
+    reserva_datos = request.session.get('reserva_datos')
+    if not reserva_datos:
+        return redirect('reservar_servicio')
+
+    # Fechas y horarios disponibles (más adelante generar desde la BD)
+    hoy = timezone.now().date()
+    dias_disponibles = [hoy + timedelta(days=i) for i in range(1, 6)]
+    horas_disponibles = ['09:00', '11:00', '13:00', '15:00', '17:00']
+
+    if request.method == 'POST':
+        fecha = request.POST.get('fecha')
+        hora = request.POST.get('hora')
+        if fecha and hora:
+            reserva_datos['fecha'] = fecha
+            reserva_datos['hora'] = hora
+            request.session['reserva_datos'] = reserva_datos
+            return redirect('confirmar_reserva')
+
+    return render(request, 'pages/cliente/seleccionar_fecha.html', {
+        'dias_disponibles': dias_disponibles,
+        'horas_disponibles': horas_disponibles
+    })
+
+@login_required
+def confirmar_reserva(request):
+    if request.user.tipo_usuario != 'cliente':
+        return HttpResponseForbidden("Acceso denegado.")
+
+    datos = request.session.get('reserva_datos')
+    if not datos:
+        return redirect('reservar_servicio')
+
+    if request.method == 'POST':
+        # Guardar reserva
+        reserva = Reserva.objects.create(
+            cliente=request.user,
+            tipo_servicio=datos['tipo_servicio'],
+            tipo_reserva=datos['tipo_reserva'],
+            fecha=datos['fecha'],
+            hora=datetime.strptime(datos['hora'], "%H:%M").time()
+        )
+        del request.session['reserva_datos']  # Limpiar
+        return redirect('reserva_exitosa')
+
+    return render(request, 'pages/cliente/confirmar_reserva.html', {
+        'datos': datos
+    })

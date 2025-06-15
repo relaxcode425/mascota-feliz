@@ -1,0 +1,35 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Seleccionar Fecha{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Seleccionar fecha y hora</h2>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label class="form-label">Fecha:</label>
+      <select name="fecha" class="form-select" required>
+        <option value="">Seleccione</option>
+        {% for dia in dias_disponibles %}
+          <option value="{{ dia|date:'Y-m-d' }}">{{ dia }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Hora:</label>
+      <select name="hora" class="form-select" required>
+        <option value="">Seleccione</option>
+        {% for hora in horas_disponibles %}
+          <option value="{{ hora }}">{{ hora }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Continuar</button>
+  </form>
+</div>
+{% endblock %}
