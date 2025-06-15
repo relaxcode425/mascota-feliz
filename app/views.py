@@ -3,9 +3,9 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, date
 from core.models import *
 
 """ ------------------------------------------------------------------ """
@@ -100,17 +100,46 @@ def confirmar_reserva(request):
         return redirect('reservar_servicio')
 
     if request.method == 'POST':
-        # Guardar reserva
-        reserva = Reserva.objects.create(
+
+        direccion = datos.get("direccion") if datos['tipo_reserva'] == "domicilio" else None
+
+        Reserva.objects.create(
             cliente=request.user,
             tipo_servicio=datos['tipo_servicio'],
             tipo_reserva=datos['tipo_reserva'],
             fecha=datos['fecha'],
-            hora=datetime.strptime(datos['hora'], "%H:%M").time()
+            hora=datetime.strptime(datos['hora'], "%H:%M").time(),
+            direccion=direccion,
+            estado='pendiente'  # valor por defecto
         )
+
         del request.session['reserva_datos']  # Limpiar
         return redirect('reserva_exitosa')
 
     return render(request, 'pages/cliente/confirmar_reserva.html', {
         'datos': datos
     })
+
+@login_required
+def ver_reservas_cliente(request):
+    if request.user.tipo_usuario != 'cliente':
+        return HttpResponseForbidden("Acceso denegado.")
+    
+    reservas = Reserva.objects.filter(cliente=request.user).order_by('-fecha', '-hora')
+    return render(request, 'pages/cliente/ver_reservas.html', {
+        'reservas': reservas,
+        'today': date.today()
+    })
+
+@login_required
+def cancelar_reserva_cliente(request, reserva_id):
+    reserva = get_object_or_404(Reserva, id=reserva_id, cliente=request.user)
+
+    if request.method == 'POST':
+        if reserva.fecha >= date.today():
+            reserva.estado = "cancelada"
+            reserva.save()
+            messages.success(request, "La reserva ha sido cancelada correctamente.")
+        else:
+            messages.error(request, "No se puede cancelar una reserva pasada.")
+        return redirect('ver_reservas_cliente')

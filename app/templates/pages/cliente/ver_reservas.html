@@ -1,0 +1,66 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Mis Reservas{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Mis Reservas</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    {% if reservas %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                <th>Servicio</th>
+                <th>Tipo</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Dirección</th>
+                <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reserva in reservas %}
+                <tr>
+                    <td>{{ reserva.get_tipo_servicio_display }}</td>
+                    <td>{{ reserva.get_tipo_reserva_display }}</td>
+                    <td>{{ reserva.fecha }}</td>
+                    <td>{{ reserva.hora }}</td>
+                    <td>{{ reserva.direccion|default:"-" }}</td>
+                    <td>
+                        {% if reserva.get_estado_display == "Pendiente" %}
+                            <span class="badge bg-warning text-dark">{{ reserva.get_estado_display }}</span>
+                        {% elif reserva.get_estado_display == "Confirmada" %}
+                            <span class="badge" style="background-color: #90ee90; color: #222;">{{ reserva.get_estado_display }}</span>
+                        {% elif reserva.get_estado_display == "Cancelada" %}
+                            <span class="badge bg-danger">{{ reserva.get_estado_display }}</span>
+                        {% elif reserva.get_estado_display == "Cerrada" %}
+                            <span class="badge bg-success">{{ reserva.get_estado_display }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ reserva.get_estado_display }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                    {% if reserva.fecha >= today %}
+                        <form method="post" action="{% url 'cancelar_reserva_cliente' reserva.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger">Cancelar</button>
+                        </form>
+                    {% else %}
+                        <span class="text-muted">No cancelable</span>
+                    {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No tienes reservas registradas.</p>
+    {% endif %}
+</div>
+{% endblock %}

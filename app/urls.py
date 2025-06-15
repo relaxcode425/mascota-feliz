@@ -8,8 +8,11 @@ urlpatterns = [
     path("login/", views.login_view, name="login"),
     path('panel/', views.panel_principal, name='panel'),
     path('logout/', views.logout_view, name='logout'),
+    #Funcionalidades cliente
     path('reservar/', views.reservar_servicio, name='reservar_servicio'),
     path('reservar/fecha/', views.seleccionar_fecha, name='seleccionar_fecha'),
     path('reservar/confirmar/', views.confirmar_reserva, name='confirmar_reserva'),
     path('reservar/exito/', TemplateView.as_view(template_name='pages/cliente/reserva_exitosa.html'), name='reserva_exitosa'),
+    path('/reservas/', views.ver_reservas_cliente, name='ver_reservas_cliente'),
+    path('cliente/reservas/cancelar/<int:reserva_id>/', views.cancelar_reserva_cliente, name='cancelar_reserva_cliente'),
 ]

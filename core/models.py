@@ -18,6 +18,17 @@ class Usuario(AbstractUser):
 
 
 class Reserva(models.Model):
+    ESTADOS = [
+        ('pendiente', 'Pendiente'),
+        ('confirmada', 'Confirmada'),
+        ('en_camino', 'En camino'),         # solo a domicilio
+        ('en_espera', 'En espera'),         # solo presencial
+        ('en_atencion', 'En atención'),
+        ('finalizada', 'Finalizada'),
+        ('cancelada', 'Cancelada'),
+        ('no_asistio', 'No asistió'),
+    ]
+
     TIPO_SERVICIO_CHOICES = [
         ('veterinario', 'Veterinario'),
         ('estetico', 'Estético'),
@@ -33,6 +44,8 @@ class Reserva(models.Model):
     fecha = models.DateField()
     hora = models.TimeField()
     creada_en = models.DateTimeField(auto_now_add=True)
+    direccion = models.CharField(max_length=255, blank=True, null=True)
+    estado = models.CharField(max_length=20, choices=ESTADOS, default='pendiente')
 
     def __str__(self):
         return f"{self.cliente.username} - {self.tipo_servicio} - {self.fecha} {self.hora}"
