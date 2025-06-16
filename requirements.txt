@@ -1,5 +1,0 @@
-Django
-djangorestframework
-Pillow
-django-browser-reload
-django-tailwind[reload]

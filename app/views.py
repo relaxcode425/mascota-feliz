@@ -170,7 +170,7 @@ def cambiar_estado_reserva(request, reserva_id, nuevo_estado):
     messages.success(request, f"Estado actualizado a: {reserva.get_estado_display()}")
     return redirect('panel')
 
-@login_required
+""" @login_required
 def registrar_dueno(request):
     if request.method == 'POST':
         form = DuenoForm(request.POST)
@@ -180,4 +180,20 @@ def registrar_dueno(request):
             return redirect('panel')
     else:
         form = DuenoForm()
-    return render(request, 'recepcion/registrar_dueno.html', {'form': form})
+    return render(request, 'recepcion/registrar_dueno.html', {'form': form}) """
+
+def registrar_dueno(request):
+    if request.method == "POST":
+        return render(request, "pages/recepcion/exito_registro.html", {"mensaje": "dueño"})
+    
+    return render(request, "pages/recepcion/registro_dueno.html")
+
+def registrar_mascota(request):
+    if request.method == "POST":
+        return render(request, "pages/recepcion/exito_registro.html", {"mensaje": "mascota"})
+    duenos = Dueno.objects.all()
+    sexo_choices = Mascota.SEXO_CHOICES
+    return render(request, 'pages/recepcion/registro_mascota.html', {
+        'duenos': duenos,
+        'sexo_choices': sexo_choices,
+    })

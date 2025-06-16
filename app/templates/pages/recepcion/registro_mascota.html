@@ -1,0 +1,52 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Registrar Mascota{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Registrar Mascota</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">Datos de la Mascota</div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="dueno" class="form-label">Dueño</label>
+                    <select class="form-control" id="dueno" name="dueno" >
+                        <option value="">Seleccione un dueño</option>
+                        {% for dueno in duenos %}
+                            <option value="{{ dueno.id }}">{{ dueno.nombre }} ({{ dueno.rut }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="nombre" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" >
+                </div>
+                <div class="mb-3">
+                    <label for="chip" class="form-label">Chip</label>
+                    <input type="text" class="form-control" id="chip" name="chip">
+                </div>
+                <div class="mb-3">
+                    <label for="raza" class="form-label">Raza</label>
+                    <input type="text" class="form-control" id="raza" name="raza" >
+                </div>
+                <div class="mb-3">
+                    <label for="color" class="form-label">Color</label>
+                    <input type="text" class="form-control" id="color" name="color" >
+                </div>
+                <div class="mb-3">
+                    <label for="sexo" class="form-label">Sexo</label>
+                    <select class="form-control" id="sexo" name="sexo" >
+                        <option value="">Seleccione sexo</option>
+                        {% for key, value in sexo_choices %}
+                            <option value="{{ key }}">{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success">Registrar Mascota</button>
+    </form>
+</div>
+{% endblock %}

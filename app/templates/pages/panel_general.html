@@ -36,6 +36,11 @@
   {% elif tipo_usuario == 'recepcion' %}
     <h4 class="mb-3">Gestión de Reservas Presenciales</h4>
 
+    <div class="mb-4">
+      <a href="{% url 'registrar_dueno' %}" class="btn btn-outline-primary me-2">Registrar Dueño</a>
+      <a href="{% url 'registrar_mascota' %}" class="btn btn-outline-success">Registrar Mascota</a>
+    </div>
+
     <table class="table table-bordered table-hover">
       <thead>
         <tr>
@@ -78,7 +83,6 @@
         {% endfor %}
       </tbody>
     </table>
-      <p>Panel genérico o en construcción para el tipo: {{ tipo_usuario }}</p>
   {% endif %}
 </div>
 {% endblock %}

@@ -64,18 +64,23 @@ class Dueno(models.Model):
         return f"{self.nombre} ({self.rut})"
 
 class Mascota(models.Model):
+    SEXO_CHOICES = [
+        ('macho', 'Macho'),
+        ('hembra', 'Hembra'),
+    ]
     dueno = models.ForeignKey(Dueno, on_delete=models.CASCADE, related_name='mascotas')
     nombre = models.CharField(max_length=100)
     chip = models.CharField(max_length=30, blank=True, null=True)
     raza = models.CharField(max_length=100)
     color = models.CharField(max_length=50)
+    sexo = models.CharField(max_length=10, choices=SEXO_CHOICES, default='macho')
 
     def __str__(self):
         return f"{self.nombre} ({self.raza})"
 
 class ServicioDomicilio(models.Model):
     reserva = models.OneToOneField(Reserva, on_delete=models.CASCADE, limit_choices_to={'tipo_reserva': 'domicilio'})
-    equipo = models.CharField(max_length=100)  # o ForeignKey si tienes modelo de equipo
+    equipo = models.CharField(max_length=100)
     estado = models.CharField(max_length=50)
 
     def __str__(self):

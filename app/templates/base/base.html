@@ -23,24 +23,22 @@
 
                     {% if user.is_authenticated %}
                         {% if user.tipo_usuario == 'cliente' %}
-                            <li class="nav-item"><a class="nav-link" href="/reservas/">Mis Reservas</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/mascotas/">Mis Mascotas</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'ver_reservas' %}">Mis Reservas</a></li>
+                            <li class="nav-item"><a class="nav-link" href="">Ver fichas</a></li>
 
                         {% elif user.tipo_usuario == 'recepcion' %}
-                            <li class="nav-item"><a class="nav-link" href="/panel/">Reservas Presenciales</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/duenos/registrar/">Registrar Dueño</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'panel' %}">Reservas Presenciales</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'registrar_dueno' %}">Registrar Dueño</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'registrar_mascota' %}">Registrar mascota</a></li>
 
                         {% elif user.tipo_usuario == 'veterinario' %}
-                            <li class="nav-item"><a class="nav-link" href="/fichas/">Fichas Médicas</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'panel' %}">Fichas Médicas</a></li>
 
                         {% elif user.tipo_usuario == 'operador' %}
-                            <li class="nav-item"><a class="nav-link" href="/panel/">Gestionar Domicilios</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'panel' %}">Gestionar Domicilios</a></li>
 
                         {% elif user.tipo_usuario == 'estilista' %}
-                            <li class="nav-item"><a class="nav-link" href="/panel/">Citas Estéticas</a></li>
-
-                        {% elif user.tipo_usuario == 'ventas' %}
-                            <li class="nav-item"><a class="nav-link" href="/ventas/">Gestión de Ventas</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'panel' %}">Citas Estéticas</a></li>
                         {% endif %}
                     {% endif %}
                 </ul>
