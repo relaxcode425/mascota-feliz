@@ -1,4 +1,3 @@
-
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -7,6 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from datetime import timedelta, datetime, date
 from core.models import *
+from core.forms import DuenoForm
 
 """ ------------------------------------------------------------------ """
 
@@ -34,12 +34,32 @@ def logout_view(request):
     return redirect('login')
 
 """ ------------------------------------------------------------------ """
-#Panel seún usuario
+#Panel según usuario
 
 @login_required
 def panel_principal(request):
     tipo = request.user.tipo_usuario
-    return render(request, 'pages/panel_general.html', {'tipo_usuario': tipo})
+
+    if tipo == 'recepcion':
+        reservas = Reserva.objects.filter(tipo_reserva='presencial')
+
+    context = {
+        'tipo_usuario': tipo,
+        'reservas': reservas if tipo == 'recepcion' else None,
+    }
+
+    return render(request, 'pages/panel_general.html', context)
+
+@login_required
+def ver_reservas_cliente(request):
+    if request.user.tipo_usuario != 'cliente':
+        return HttpResponseForbidden("Acceso denegado.")
+    
+    reservas = Reserva.objects.filter(cliente=request.user).order_by('-fecha', '-hora')
+    return render(request, 'pages/ver_reservas.html', {
+        'reservas': reservas,
+        'today': date.today()
+    })
 
 """ ------------------------------------------------------------------ """
 # funcionalidades cliente
@@ -121,17 +141,6 @@ def confirmar_reserva(request):
     })
 
 @login_required
-def ver_reservas_cliente(request):
-    if request.user.tipo_usuario != 'cliente':
-        return HttpResponseForbidden("Acceso denegado.")
-    
-    reservas = Reserva.objects.filter(cliente=request.user).order_by('-fecha', '-hora')
-    return render(request, 'pages/cliente/ver_reservas.html', {
-        'reservas': reservas,
-        'today': date.today()
-    })
-
-@login_required
 def cancelar_reserva_cliente(request, reserva_id):
     reserva = get_object_or_404(Reserva, id=reserva_id, cliente=request.user)
 
@@ -143,3 +152,32 @@ def cancelar_reserva_cliente(request, reserva_id):
         else:
             messages.error(request, "No se puede cancelar una reserva pasada.")
         return redirect('ver_reservas_cliente')
+    
+""" ------------------------------------------------------------------ """
+# Funcionalidades recepcion
+@login_required
+def cambiar_estado_reserva(request, reserva_id, nuevo_estado):
+    reserva = get_object_or_404(Reserva, id=reserva_id)
+
+    # Verificación opcional de permisos (solo recepción u operador)
+    if request.user.tipo_usuario not in ['recepcion', 'operador']:
+        messages.error(request, "No tienes permiso para cambiar el estado de esta reserva.")
+        return redirect('panel')
+
+    # Actualizar estado
+    reserva.estado = nuevo_estado
+    reserva.save()
+    messages.success(request, f"Estado actualizado a: {reserva.get_estado_display()}")
+    return redirect('panel')
+
+@login_required
+def registrar_dueno(request):
+    if request.method == 'POST':
+        form = DuenoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Dueño registrado con éxito.")
+            return redirect('panel')
+    else:
+        form = DuenoForm()
+    return render(request, 'recepcion/registrar_dueno.html', {'form': form})

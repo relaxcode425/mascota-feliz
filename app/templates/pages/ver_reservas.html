@@ -54,6 +54,21 @@
                     {% else %}
                         <span class="text-muted">No cancelable</span>
                     {% endif %}
+                    {% if user.tipo_usuario == 'Recepcion' and reserva.tipo_reserva == 'presencial' and reserva.estado == 'confirmada' %}
+                    <a href="{% url 'cambiar_estado_reserva' reserva.id 'en_espera' %}" class="btn btn-sm btn-warning">Cliente llegó</a>
+                    {% endif %}
+
+                    {% if user.tipo_usuario == 'Operador de agenda' and reserva.tipo_reserva == 'domicilio' and reserva.estado == 'confirmada' %}
+                    <a href="{% url 'cambiar_estado_reserva' reserva.id 'en_camino' %}" class="btn btn-sm btn-primary">En camino</a>
+                    {% endif %}
+
+                    {% if user.tipo_usuario == 'Veterinario' or user.tipo_usuario == 'Estilista' and reserva.estado == 'en_espera' or reserva.estado == 'en_camino' %}
+                    <a href="{% url 'cambiar_estado_reserva' reserva.id 'en_atencion' %}" class="btn btn-sm btn-info">Iniciar atención</a>
+                    {% endif %}
+
+                    {% if user.tipo_usuario == 'Veterinario' or user.tipo_usuario == 'Estilista' and reserva.estado == 'en_atencion' %}
+                    <a href="{% url 'cambiar_estado_reserva' reserva.id 'finalizada' %}" class="btn btn-sm btn-success">Finalizar</a>
+                    {% endif %}
                     </td>
                 </tr>
                 {% endfor %}

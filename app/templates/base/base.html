@@ -18,9 +18,31 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
+
                     <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/reservar/">Reservas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/fichas/">Fichas Médicas</a></li>
+
+                    {% if user.is_authenticated %}
+                        {% if user.tipo_usuario == 'cliente' %}
+                            <li class="nav-item"><a class="nav-link" href="/reservas/">Mis Reservas</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/mascotas/">Mis Mascotas</a></li>
+
+                        {% elif user.tipo_usuario == 'recepcion' %}
+                            <li class="nav-item"><a class="nav-link" href="/panel/">Reservas Presenciales</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/duenos/registrar/">Registrar Dueño</a></li>
+
+                        {% elif user.tipo_usuario == 'veterinario' %}
+                            <li class="nav-item"><a class="nav-link" href="/fichas/">Fichas Médicas</a></li>
+
+                        {% elif user.tipo_usuario == 'operador' %}
+                            <li class="nav-item"><a class="nav-link" href="/panel/">Gestionar Domicilios</a></li>
+
+                        {% elif user.tipo_usuario == 'estilista' %}
+                            <li class="nav-item"><a class="nav-link" href="/panel/">Citas Estéticas</a></li>
+
+                        {% elif user.tipo_usuario == 'ventas' %}
+                            <li class="nav-item"><a class="nav-link" href="/ventas/">Gestión de Ventas</a></li>
+                        {% endif %}
+                    {% endif %}
                 </ul>
 
                 <ul class="navbar-nav">
@@ -35,6 +57,7 @@
             </div>
         </div>
     </nav>
+
 
     <div class="container">
         {% block content %}
