@@ -36,10 +36,23 @@
                     <input type="text" class="form-control" id="color" name="color" >
                 </div>
                 <div class="mb-3">
+                    <label for="fecha_nacimiento" class="form-label">Fecha de nacimiento</label>
+                    <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento">
+                </div>
+                <div class="mb-3">
                     <label for="sexo" class="form-label">Sexo</label>
                     <select class="form-control" id="sexo" name="sexo" >
                         <option value="">Seleccione sexo</option>
                         {% for key, value in sexo_choices %}
+                            <option value="{{ key }}">{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="especie" class="form-label">Especie</label>
+                    <select class="form-control" id="especie" name="especie" required>
+                        <option value="">Seleccione especie</option>
+                        {% for key, value in especie_choices %}
                             <option value="{{ key }}">{{ value }}</option>
                         {% endfor %}
                     </select>

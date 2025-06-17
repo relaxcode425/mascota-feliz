@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Usuario, Reserva, Dueno, Mascota, ServicioDomicilio, FichaMedica, Entrada
+from .models import Usuario, Reserva, Dueno, Mascota, ServicioDomicilio, FichaMedica, Entrada, Receta
 
 class UsuarioAdmin(UserAdmin):
     fieldsets = UserAdmin.fieldsets + (
@@ -23,7 +23,7 @@ class DuenoAdmin(admin.ModelAdmin):
 
 @admin.register(Mascota)
 class MascotaAdmin(admin.ModelAdmin):
-    list_display = ['nombre', 'raza', 'color', 'dueno']
+    list_display = ['nombre', 'raza', 'color', 'dueno', 'especie', 'sexo', 'fecha_nacimiento']
     search_fields = ['nombre', 'raza', 'dueno__nombre']
 
 @admin.register(ServicioDomicilio)
@@ -41,10 +41,15 @@ class ServicioDomicilioAdmin(admin.ModelAdmin):
 
 @admin.register(FichaMedica)
 class FichaMedicaAdmin(admin.ModelAdmin):
-    list_display = ['mascota', 'edad', 'peso']
+    list_display = ['mascota']
     search_fields = ['mascota__nombre']
 
 @admin.register(Entrada)
 class EntradaAdmin(admin.ModelAdmin):
-    list_display = ['ficha_medica', 'fecha', 'descripcion']
-    search_fields = ['ficha_medica__mascota__nombre', 'descripcion']
+    list_display = ['ficha_medica', 'fecha', 'peso', 'descripcion', 'tratamiento']
+    search_fields = ['ficha_medica__mascota__nombre', 'fecha', 'descripcion', 'tratamiento']
+
+@admin.register(Receta)
+class RecetaAdmin(admin.ModelAdmin):
+    list_display = ['entrada', 'fecha', 'firmado_por']
+    search_fields = ['entrada__ficha_medica__mascota__nombre', 'medicamentos', 'indicaciones_generales', 'firmado_por__username']

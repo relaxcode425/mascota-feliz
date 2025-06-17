@@ -11,6 +11,8 @@ class Usuario(AbstractUser):
         ('veterinario', 'Veterinario'),
         ('estilista', 'Estilista'),
         ('ventas', 'Vendedor'),
+        ('administrador', 'Administrador'),
+        ('ventas', 'Ventas'),
     ]
     tipo_usuario = models.CharField(max_length=20, choices=TIPOS, default='cliente')
 
@@ -81,6 +83,7 @@ class Mascota(models.Model):
     color = models.CharField(max_length=50)
     sexo = models.CharField(max_length=10, choices=SEXO_CHOICES, default='macho')
     especie = models.CharField(max_length=20, choices=ESPECIE_CHOICES, default='perro')
+    fecha_nacimiento = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.nombre} ({self.raza})"
@@ -118,8 +121,6 @@ class ServicioDomicilio(models.Model):
     
 class FichaMedica(models.Model):
     mascota = models.OneToOneField(Mascota, on_delete=models.CASCADE)
-    edad = models.IntegerField()
-    peso = models.FloatField()
 
     def __str__(self):
         return f"Ficha {self.mascota.nombre}"
@@ -127,7 +128,25 @@ class FichaMedica(models.Model):
 class Entrada(models.Model):
     ficha_medica = models.ForeignKey(FichaMedica, on_delete=models.CASCADE, related_name='entradas')
     fecha = models.DateTimeField(auto_now_add=True)
+    peso = models.FloatField(null=True, blank=True)
     descripcion = models.TextField()
+    tratamiento = models.TextField(blank=True, help_text="Detalle del procedimiento realizado")
 
     def __str__(self):
         return f"Entrada - {self.ficha_medica.mascota.nombre} - {self.fecha.strftime('%Y-%m-%d %H:%M')}"
+
+class Receta(models.Model):
+    entrada = models.OneToOneField(Entrada, on_delete=models.CASCADE, related_name='receta')
+    fecha = models.DateTimeField(auto_now_add=True)
+    medicamentos = models.TextField(help_text="Indicar nombre comercial, dosis, vía y frecuencia.")
+    indicaciones_generales = models.TextField(blank=True, help_text="Instrucciones adicionales para el dueño.")
+    firmado_por = models.ForeignKey(
+        Usuario,
+        on_delete=models.SET_NULL,
+        null=True,
+        limit_choices_to={'tipo_usuario': 'veterinario'},
+        related_name='recetas_emitidas'
+    )
+
+    def __str__(self):
+        return f"Receta - {self.entrada.ficha_medica.mascota.nombre} - {self.fecha.strftime('%Y-%m-%d')}"

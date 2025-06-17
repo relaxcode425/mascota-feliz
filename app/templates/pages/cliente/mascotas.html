@@ -1,0 +1,35 @@
+{% extends 'base/base.html' %}
+{% block title %}Mis Mascotas{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Mis Mascotas</h2>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Especie</th>
+                <th>Raza</th>
+                <th>Color</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mascota in mascotas %}
+            <tr>
+                <td>{{ mascota.nombre }}</td>
+                <td>{{ mascota.get_especie_display }}</td>
+                <td>{{ mascota.raza }}</td>
+                <td>{{ mascota.color }}</td>
+                <td>
+                    <a href="{% url 'ver_mascota' mascota.id %}" class="btn btn-sm btn-info">Ver ficha</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No tienes mascotas registradas.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

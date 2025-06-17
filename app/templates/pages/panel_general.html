@@ -24,14 +24,54 @@
           <div class="card-body">
             <h5 class="card-title">Fichas médicas</h5>
             <p class="card-text">Consulta fichas de tus mascotas.</p>
-            <a href="" class="btn btn-secondary">Ver fichas</a>
+            <a href="{% url 'ver_mis_mascotas' %}" class="btn btn-primary">Ver Mascotas</a>
           </div>
         </div>
       </div>
     </div>
 
-  {% elif tipo_usuario == 'veterinario' %}
-    <p>Panel con acceso a fichas, recetas y servicios veterinarios.</p>
+  {% elif tipo_usuario == 'veterinario' or tipo_usuario == 'estilista' %}
+    <h4 class="mb-3">Listado de Mascotas</h4>
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>Nombre Mascota</th>
+          <th>Especie</th>
+          <th>Sexo</th>
+          <th>Raza</th>
+          <th>Color</th>
+          <th>Dueño</th>
+          <th>Contacto</th>
+          <th>Rut</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for mascota in mascotas %}
+        <tr>
+          <td>{{ mascota.nombre }}</td>
+          <td>{{ mascota.get_especie_display }}</td>
+          <td>{{ mascota.get_sexo_display }}</td>
+          <td>{{ mascota.raza }}</td>
+          <td>{{ mascota.color }}</td>
+          <td>{{ mascota.dueno.nombre }}</td>
+          <td>{{ mascota.dueno.contacto }}</td>
+          <td>{{ mascota.dueno.rut }}</td>
+          <td>
+            <a href="{% url 'ver_mascota' mascota.id %}" class="btn btn-sm btn-info">Ver mascota</a>
+            <a href="{% url 'ver_dueno' %}" class="btn btn-sm btn-info">Ver dueño</a>
+            {% if not mascota.fichamedica %}
+              <a href="{% url 'crear_ficha_medica' %}?mascota_id={{ mascota.id }}" class="btn btn-sm btn-success">Crear ficha</a>
+            {% else %}
+              <a href="{% url 'crear_entrada' mascota.fichamedica.id %}" class="btn btn-sm btn-success">Crear entrada</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8">No hay mascotas registradas.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
 
   {% elif tipo_usuario == 'recepcion' %}
     <h4 class="mb-3">Gestión de Reservas Presenciales</h4>
@@ -159,6 +199,78 @@
         </tr>
         {% empty %}
         <tr><td colspan="6">No hay reservas presenciales para hoy.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% elif tipo_usuario == 'ventas' %}
+    <h4 class="mb-3">Recetas Médicas</h4>
+    <form method="get" class="row g-3 mb-4">
+      <div class="col-auto">
+        <input type="text" class="form-control" name="rut" placeholder="Buscar por RUT dueño" value="{{ filtro_rut }}">
+      </div>
+      <div class="col-auto">
+        <input type="number" class="form-control" name="receta_id" placeholder="Buscar por ID receta" value="{{ filtro_receta_id }}">
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-outline-primary">Filtrar</button>
+        <a href="{% url 'panel' %}" class="btn btn-outline-secondary">Limpiar</a>
+      </div>
+    </form>
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>ID Receta</th>
+          <th>Fecha</th>
+          <th>Mascota</th>
+          <th>Dueño</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for receta in recetas %}
+        <tr>
+          <td>{{ receta.id }}</td>
+          <td>{{ receta.fecha|date:"d/m/Y H:i" }}</td>
+          <td>{{ receta.entrada.ficha_medica.mascota.nombre }} ({{ receta.entrada.ficha_medica.mascota.get_especie_display }})</td>
+          <td>{{ receta.entrada.ficha_medica.mascota.dueno.nombre }}</td>
+          <td>
+            <!-- Botón para abrir el modal -->
+            <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#recetaModal{{ receta.id }}">
+              Ver información
+            </button>
+            <!-- Modal -->
+            <div class="modal fade" id="recetaModal{{ receta.id }}" tabindex="-1" aria-labelledby="recetaModalLabel{{ receta.id }}" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="recetaModalLabel{{ receta.id }}">Detalle de Receta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p><strong>ID Receta:</strong> {{ receta.id }}</p>
+                    <p><strong>Fecha:</strong> {{ receta.fecha|date:"d/m/Y H:i" }}</p>
+                    <hr>
+                    <p><strong>Nombre mascota:</strong> {{ receta.entrada.ficha_medica.mascota.nombre }}</p>
+                    <p><strong>Especie:</strong> {{ receta.entrada.ficha_medica.mascota.get_especie_display }}</p>
+                    <hr>
+                    <p><strong>Dueño:</strong> {{ receta.entrada.ficha_medica.mascota.dueno.nombre }}</p>
+                    <p><strong>RUT dueño:</strong> {{ receta.entrada.ficha_medica.mascota.dueno.rut }}</p>
+                    <p><strong>Teléfono dueño:</strong> {{ receta.entrada.ficha_medica.mascota.dueno.contacto }}</p>
+                    <hr>
+                    <p><strong>Medicamentos:</strong> {{ receta.medicamentos }}</p>
+                    <p><strong>Indicaciones generales:</strong> {{ receta.indicaciones_generales }}</p>
+                    <p><strong>Firmado por:</strong> {{ receta.firmado_por.get_full_name|default:receta.firmado_por.username }}</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No hay recetas que coincidan con el filtro.</td></tr>
         {% endfor %}
       </tbody>
     </table>
