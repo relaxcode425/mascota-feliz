@@ -30,3 +30,25 @@ class DuenoForm(forms.ModelForm):
             dueno.save()
 
         return dueno
+    
+    from django import forms
+from .models import ServicioDomicilio
+
+class ServicioDomicilioForm(forms.ModelForm):
+    class Meta:
+        model = ServicioDomicilio
+        fields = ['num_estilistas', 'num_veterinarios', 'horario_asignado', 'descripcion']
+        widgets = {
+            'descripcion': forms.Textarea(attrs={'rows': 3}),
+            'horario_asignado': forms.TimeInput(attrs={'type': 'time'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        e = cleaned_data.get('num_estilistas')
+        v = cleaned_data.get('num_veterinarios')
+
+        if e and v:
+            raise forms.ValidationError("No pueden ir estilistas y veterinarios al mismo tiempo.")
+        if (e not in [1, 2] and v not in [1, 2]):
+            raise forms.ValidationError("Debe haber 1 o 2 estilistas o 1 o 2 veterinarios.")

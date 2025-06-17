@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from datetime import timedelta, datetime, date
 from core.models import *
-from core.forms import DuenoForm
+from core.forms import *
 
 """ ------------------------------------------------------------------ """
 
@@ -198,4 +198,32 @@ def registrar_mascota(request):
     return render(request, 'pages/recepcion/registro_mascota.html', {
         'duenos': duenos,
         'sexo_choices': sexo_choices,
+    })
+
+""" ------------------------------------------------------------------ """  
+#Funcionalidades operador
+
+@login_required
+def asignar_equipo_domicilio(request, reserva_id):
+    reserva = get_object_or_404(Reserva, id=reserva_id, tipo_reserva='domicilio')
+
+    try:
+        servicio = ServicioDomicilio.objects.get(reserva=reserva)
+    except ServicioDomicilio.DoesNotExist:
+        servicio = None
+
+    if request.method == 'POST':
+        form = ServicioDomicilioForm(request.POST, instance=servicio)
+        if form.is_valid():
+            nuevo_servicio = form.save(commit=False)
+            nuevo_servicio.reserva = reserva
+            nuevo_servicio.save()
+            messages.success(request, "Equipo asignado correctamente.")
+            return redirect('panel')
+    else:
+        form = ServicioDomicilioForm(instance=servicio)
+
+    return render(request, 'pages/operador/crear_equipo_movil.html', {
+        'reserva': reserva,
+        'form': form
     })

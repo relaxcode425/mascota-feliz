@@ -28,8 +28,16 @@ class MascotaAdmin(admin.ModelAdmin):
 
 @admin.register(ServicioDomicilio)
 class ServicioDomicilioAdmin(admin.ModelAdmin):
-    list_display = ['reserva', 'equipo', 'estado']
-    search_fields = ['reserva__id', 'equipo']
+    list_display = [
+        'reserva',
+        'num_estilistas',
+        'num_veterinarios',
+        'tipo_equipo',
+        'horario_asignado',
+        'estado',
+    ]
+    search_fields = ['reserva__id', 'reserva__cliente__username', 'estado']
+    list_filter = ['estado']
 
 @admin.register(FichaMedica)
 class FichaMedicaAdmin(admin.ModelAdmin):

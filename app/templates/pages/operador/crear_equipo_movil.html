@@ -1,0 +1,30 @@
+{% extends 'base/base.html' %}
+{% block content %}
+<div class="container mt-5 mb-5">
+    <h3 class="mb-4">Asignar equipo a reserva de domicilio</h3>
+
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            Detalles de la Reserva
+        </div>
+        <div class="card-body">
+            <p><strong>Cliente:</strong> {{ reserva.cliente.username }}</p>
+            <p><strong>Dirección:</strong> {{ reserva.direccion }}</p>
+            <p><strong>Fecha:</strong> {{ reserva.fecha }} a las {{ reserva.hora }}</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            Asignar equipo
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Guardar equipo</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

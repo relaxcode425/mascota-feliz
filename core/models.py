@@ -68,23 +68,53 @@ class Mascota(models.Model):
         ('macho', 'Macho'),
         ('hembra', 'Hembra'),
     ]
+
+    ESPECIE_CHOICES = [
+        ('perro', 'Perro'),
+        ('gato', 'Gato'),
+    ]
+
     dueno = models.ForeignKey(Dueno, on_delete=models.CASCADE, related_name='mascotas')
     nombre = models.CharField(max_length=100)
     chip = models.CharField(max_length=30, blank=True, null=True)
     raza = models.CharField(max_length=100)
     color = models.CharField(max_length=50)
     sexo = models.CharField(max_length=10, choices=SEXO_CHOICES, default='macho')
+    especie = models.CharField(max_length=20, choices=ESPECIE_CHOICES, default='perro')
 
     def __str__(self):
         return f"{self.nombre} ({self.raza})"
 
 class ServicioDomicilio(models.Model):
-    reserva = models.OneToOneField(Reserva, on_delete=models.CASCADE, limit_choices_to={'tipo_reserva': 'domicilio'})
-    equipo = models.CharField(max_length=255)
-    estado = models.CharField(max_length=50)
+    reserva = models.OneToOneField(
+        Reserva,
+        on_delete=models.CASCADE,
+        limit_choices_to={'tipo_reserva': 'domicilio'}
+    )
+    num_estilistas = models.PositiveSmallIntegerField(default=0)
+    num_veterinarios = models.PositiveSmallIntegerField(default=0)
+    descripcion = models.TextField(blank=True)
+    horario_asignado = models.TimeField(null=True, blank=True)
+    estado = models.CharField(max_length=50, default="pendiente")
 
     def __str__(self):
         return f"Domicilio - {self.reserva}"
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+
+        if self.num_estilistas and self.num_veterinarios:
+            raise ValidationError("No pueden ir estilistas y veterinarios al mismo tiempo.")
+        if not (1 <= self.num_estilistas <= 2 or 1 <= self.num_veterinarios <= 2):
+            raise ValidationError("Debe haber 1 o 2 estilistas o veterinarios.")
+
+    @property
+    def tipo_equipo(self):
+        if self.num_veterinarios:
+            return f"1 conductor + {self.num_veterinarios} veterinario(s)"
+        elif self.num_estilistas:
+            return f"1 conductor + {self.num_estilistas} estilista(s)"
+        return "Equipo no definido"
     
 class FichaMedica(models.Model):
     mascota = models.OneToOneField(Mascota, on_delete=models.CASCADE)

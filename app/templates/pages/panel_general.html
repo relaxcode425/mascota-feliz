@@ -115,6 +115,45 @@
             {% elif reserva.estado == 'cancelada' or reserva.estado == 'finalizada' %}
               <a href="{% url 'cambiar_estado_reserva' reserva.id 'pendiente' %}" class="btn btn-sm btn-warning">Reactivar</a>
             {% endif %}
+            {% if reserva.estado == 'cancelada' or reserva.estado == 'finalizada' or reserva.estado == 'pendiente' %}
+            {% else %}
+            {% if reserva.serviciodomicilio %}
+            <!-- Botón para abrir el modal -->
+            <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#equipoModal{{ reserva.id }}">
+              Ver equipo
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="equipoModal{{ reserva.id }}" tabindex="-1" aria-labelledby="equipoModalLabel{{ reserva.id }}" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="equipoModalLabel{{ reserva.id }}">Equipo asignado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p><strong>Tipo de equipo:</strong> {{ reserva.serviciodomicilio.tipo_equipo }}</p>
+                    <p><strong>Estilistas:</strong> {{ reserva.serviciodomicilio.num_estilistas }}</p>
+                    <p><strong>Veterinarios:</strong> {{ reserva.serviciodomicilio.num_veterinarios }}</p>
+                    <p><strong>Horario asignado:</strong> {{ reserva.serviciodomicilio.horario_asignado|default:"No asignado" }}</p>
+                    <p><strong>Descripción:</strong> {{ reserva.serviciodomicilio.descripcion|default:"-" }}</p>
+                    <p><strong>Estado:</strong> {{ reserva.serviciodomicilio.estado }}</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <a href="{% url 'asignar_equipo_domicilio' reserva.id %}" class="btn btn-warning">
+                      Editar equipo
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% else %}
+            <a href="{% url 'asignar_equipo_domicilio' reserva.id %}" class="btn btn-sm btn-outline-primary">
+              Asignar equipo
+            </a>
+            {% endif %}
+            {% endif %}
             <a href="" class="btn btn-sm btn-info">Ver usuario</a>
           </td>
         </tr>

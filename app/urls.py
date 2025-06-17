@@ -20,4 +20,6 @@ urlpatterns = [
     path('reserva/<int:reserva_id>/cambiar_estado/<str:nuevo_estado>/', views.cambiar_estado_reserva, name='cambiar_estado_reserva'),
     path('recepcion/registrar-dueno/', views.registrar_dueno, name='registrar_dueno'),
     path('recepcion/registrar-mascota/', views.registrar_mascota, name='registrar_mascota'),
+    # Funcionalidades operador
+    path('reservas/<int:reserva_id>/equipo/', views.asignar_equipo_domicilio, name='asignar_equipo_domicilio'),
 ]
