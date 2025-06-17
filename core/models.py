@@ -80,7 +80,7 @@ class Mascota(models.Model):
 
 class ServicioDomicilio(models.Model):
     reserva = models.OneToOneField(Reserva, on_delete=models.CASCADE, limit_choices_to={'tipo_reserva': 'domicilio'})
-    equipo = models.CharField(max_length=100)
+    equipo = models.CharField(max_length=255)
     estado = models.CharField(max_length=50)
 
     def __str__(self):

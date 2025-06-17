@@ -42,10 +42,12 @@ def panel_principal(request):
 
     if tipo == 'recepcion':
         reservas = Reserva.objects.filter(tipo_reserva='presencial')
+    if tipo == 'operador':
+        reservas = Reserva.objects.filter(tipo_reserva='domicilio')
 
     context = {
         'tipo_usuario': tipo,
-        'reservas': reservas if tipo == 'recepcion' else None,
+        'reservas': reservas if tipo in ['recepcion', 'operador'] else None,
     }
 
     return render(request, 'pages/panel_general.html', context)

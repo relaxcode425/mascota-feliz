@@ -46,7 +46,6 @@
         <tr>
           <th>Hora</th>
           <th>Cliente</th>
-          <th>Mascota</th>
           <th>Servicio</th>
           <th>Estado</th>
           <th>Acciones</th>
@@ -57,7 +56,6 @@
         <tr>
           <td>{{ reserva.hora }}</td>
           <td>{{ reserva.cliente.username }}</td>
-          <td>{{ reserva.mascota.nombre }}</td>
           <td>{{ reserva.get_tipo_servicio_display }}</td>
           <td><span class="badge bg-secondary">{{ reserva.get_estado_display }}</span></td>
           <td>
@@ -75,7 +73,49 @@
             {% elif reserva.estado == 'cancelada' or reserva.estado == 'no_asistio' or reserva.estado == 'finalizada' %}
               <a href="{% url 'cambiar_estado_reserva' reserva.id 'pendiente' %}" class="btn btn-sm btn-warning">Reactivar</a>
             {% endif %}
-            <a href="" class="btn btn-sm btn-info">Ver Ficha</a>
+            <a href="" class="btn btn-sm btn-info">Ver usuario</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6">No hay reservas presenciales para hoy.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% elif tipo_usuario == 'operador' %}
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>Hora</th>
+          <th>Cliente</th>
+          <th>Servicio</th>
+          <th>Direccion</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for reserva in reservas %}
+        <tr>
+          <td>{{ reserva.hora }}</td>
+          <td>{{ reserva.cliente.username }}</td>
+          <td>{{ reserva.get_tipo_servicio_display }}</td>
+          <td>{{ reserva.direccion }}</td>
+          <td><span class="badge bg-secondary">{{ reserva.get_estado_display }}</span></td>
+          <td>
+            {% if reserva.estado == 'confirmada' %}
+              <a href="{% url 'cambiar_estado_reserva' reserva.id 'en_camino' %}" class="btn btn-sm btn-success">Confirmar salida del equipo</a>
+              <a href="{% url 'cambiar_estado_reserva' reserva.id 'cancelada' %}" class="btn btn-sm btn-secondary">Cancelar</a>
+            {% elif reserva.estado == 'pendiente' %}
+              <a href="{% url 'cambiar_estado_reserva' reserva.id 'confirmada' %}" class="btn btn-sm btn-success">Confirmar reserva</a>
+              <a href="{% url 'cambiar_estado_reserva' reserva.id 'cancelada' %}" class="btn btn-sm btn-secondary">Cancelar</a>
+            {% elif reserva.estado == 'en_camino' %}
+              <a href="{% url 'cambiar_estado_reserva' reserva.id 'en_atencion' %}" class="btn btn-sm btn-primary">En atención</a>
+            {% elif reserva.estado == 'en_atencion' %}
+              <a href="{% url 'cambiar_estado_reserva' reserva.id 'finalizada' %}" class="btn btn-sm btn-success">Servicio finalizado</a>
+            {% elif reserva.estado == 'cancelada' or reserva.estado == 'finalizada' %}
+              <a href="{% url 'cambiar_estado_reserva' reserva.id 'pendiente' %}" class="btn btn-sm btn-warning">Reactivar</a>
+            {% endif %}
+            <a href="" class="btn btn-sm btn-info">Ver usuario</a>
           </td>
         </tr>
         {% empty %}
