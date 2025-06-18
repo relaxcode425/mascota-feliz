@@ -212,13 +212,12 @@ def cancelar_reserva_cliente(request, reserva_id):
     reserva = get_object_or_404(Reserva, id=reserva_id, cliente=request.user)
 
     if request.method == 'POST':
-        if reserva.fecha >= date.today():
-            reserva.estado = "cancelada"
-            reserva.save()
-            messages.success(request, "La reserva ha sido cancelada correctamente.")
-        else:
-            messages.error(request, "No se puede cancelar una reserva pasada.")
-        return redirect('ver_reservas_cliente')
+        
+        reserva.estado = "cancelada"
+        reserva.save()
+        messages.success(request, "La reserva ha sido cancelada correctamente.")
+    
+        return redirect('ver_reservas')
     
 @login_required
 def ver_mis_mascotas(request):
@@ -234,7 +233,7 @@ def cambiar_estado_reserva(request, reserva_id, nuevo_estado):
     reserva = get_object_or_404(Reserva, id=reserva_id)
 
     # Verificación opcional de permisos (solo recepción u operador)
-    if request.user.tipo_usuario not in ['recepcion', 'operador']:
+    if request.user.tipo_usuario not in ['recepcion', 'operador', 'cliente']:
         messages.error(request, "No tienes permiso para cambiar el estado de esta reserva.")
         return redirect('panel')
 

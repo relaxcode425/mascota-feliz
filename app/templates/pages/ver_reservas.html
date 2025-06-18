@@ -1,10 +1,10 @@
 {% extends 'base/base.html' %}
 
-{% block title %}Mis Reservas{% endblock %}
+{% block title %}Ver Reservas{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <h2 class="mb-4">Mis Reservas</h2>
+    <h2 class="mb-4">Reservas</h2>
 
     {% if messages %}
         {% for message in messages %}
@@ -46,7 +46,13 @@
                         {% endif %}
                     </td>
                     <td>
-                    {% if reserva.fecha >= today %}
+                    {% if user.tipo_usuario == 'cliente' and reserva.fecha >= today and reserva.estado == 'pendiente' %}
+                        <a href="{% url 'cambiar_estado_reserva' reserva.id 'confirmada' %}" class="btn btn-sm btn-warning">Confirmar Reserva</a>
+                        <form method="post" action="{% url 'cancelar_reserva_cliente' reserva.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger">Cancelar</button>
+                        </form>
+                    {% elif user.tipo_usuario == 'cliente' and reserva.fecha >= today and reserva.estado == 'confirmada' %}
                         <form method="post" action="{% url 'cancelar_reserva_cliente' reserva.id %}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-sm btn-danger">Cancelar</button>
