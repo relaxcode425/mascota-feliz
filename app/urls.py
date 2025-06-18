@@ -5,6 +5,7 @@ from django.views.generic import TemplateView
 urlpatterns = [
     
     path("", views.index, name="index"),
+    path("promocional/", views.promocional, name="promocional"),
     path("login/", views.login_view, name="login"),
     path('logout/', views.logout_view, name='logout'),
     # Flexibles

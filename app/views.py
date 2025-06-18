@@ -10,10 +10,13 @@ from core.forms import *
 
 """ ------------------------------------------------------------------ """
 
-# Create your views here.
 def index(request):
-    context = {}
-    return render(request, "pages/index.html", context)
+    if request.user.is_authenticated:
+        return redirect('panel')
+    return redirect('promocional')
+
+def promocional(request):
+    return render(request, "pages/promocional.html")
 
 def login_view(request):
     if request.method == 'POST':
