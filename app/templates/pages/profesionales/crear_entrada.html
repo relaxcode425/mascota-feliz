@@ -19,7 +19,6 @@
                     <label for="tratamiento" class="form-label">Tratamiento realizado</label>
                     <textarea class="form-control" id="tratamiento" name="tratamiento" rows="3"></textarea>
                 </div>
-                {% if user.tipo_usuario == 'veterinario' %}
                 <div class="form-check mb-3">
                     <input class="form-check-input" type="checkbox" id="tiene_receta" name="tiene_receta" onclick="toggleReceta()">
                     <label class="form-check-label" for="tiene_receta">
@@ -42,7 +41,6 @@
                         recetaSection.style.display = document.getElementById('tiene_receta').checked ? 'block' : 'none';
                     }
                 </script>
-                {% endif %}
             </div>
         </div>
         <button type="submit" class="btn btn-success">Guardar entrada</button>
