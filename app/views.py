@@ -125,8 +125,26 @@ def ver_mascota(request, mascota_id):
     return render(request, "pages/ver_mascota.html", context)
 
 @login_required
-def ver_dueno(request):
-    return render(request, "pages/ver_dueno.html")
+def ver_dueno(request, user):
+    usuario = get_object_or_404(Usuario, id=user)
+    dueno = Dueno.objects.filter(usuario=user)
+
+    if dueno:
+        for dueno in dueno:
+            mascotas = Mascota.objects.filter(dueno=dueno)
+
+        print(f"Usuario: {usuario}, Dueño: {dueno}")
+
+        context = {
+            'usuario': usuario,
+            'dueno': dueno,
+            'mascotas': mascotas,
+        }
+    else:
+        context = {
+            'usuario': usuario
+        }
+    return render(request, "pages/ver_dueno.html", context)
 
 """ ------------------------------------------------------------------ """
 # funcionalidades cliente

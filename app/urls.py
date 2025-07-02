@@ -12,7 +12,7 @@ urlpatterns = [
     path('panel/', views.panel_principal, name='panel'),
     path('reservas/', views.ver_reservas_cliente, name='ver_reservas'),
     path('mascota/<int:mascota_id>/', views.ver_mascota, name='ver_mascota'),
-    path('dueno/', views.ver_dueno, name='ver_dueno'),
+    path('dueno/<int:user>/', views.ver_dueno, name='ver_dueno'),
     #Funcionalidades cliente
     path('reservar/', views.reservar_servicio, name='reservar_servicio'),
     path('reservar/fecha/', views.seleccionar_fecha, name='seleccionar_fecha'),

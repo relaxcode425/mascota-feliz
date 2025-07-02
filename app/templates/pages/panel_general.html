@@ -59,7 +59,7 @@
           <td>{{ mascota.dueno.rut }}</td>
           <td>
             <a href="{% url 'ver_mascota' mascota.id %}" class="btn btn-sm btn-info">Ver mascota</a>
-            <a href="{% url 'ver_dueno' %}" class="btn btn-sm btn-info">Ver dueño</a>
+            <a href="{% url 'ver_dueno' mascota.dueno.usuario.id %}" class="btn btn-sm btn-info">Ver dueño</a>
             {% if not mascota.fichamedica %}
               <a href="{% url 'crear_ficha_medica' %}?mascota_id={{ mascota.id }}" class="btn btn-sm btn-success">Crear ficha</a>
             {% else %}
@@ -113,7 +113,7 @@
             {% elif reserva.estado == 'cancelada' or reserva.estado == 'no_asistio' or reserva.estado == 'finalizada' %}
               <a href="{% url 'cambiar_estado_reserva' reserva.id 'pendiente' %}" class="btn btn-sm btn-warning">Reactivar</a>
             {% endif %}
-            <a href="" class="btn btn-sm btn-info">Ver usuario</a>
+            <a href="{% url 'ver_dueno' reserva.cliente.id %}" class="btn btn-sm btn-info">Ver usuario</a>
           </td>
         </tr>
         {% empty %}

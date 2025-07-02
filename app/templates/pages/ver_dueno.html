@@ -1,0 +1,38 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Ficha de {{ dueno.nombre }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Ficha del Usuario</h2>
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">Datos del Dueño</div>
+        <div class="card-body">
+            <p><strong>Usuario asociado:</strong> {{ usuario.username }}</p>
+            {% if dueno %}
+                <p><strong>Nombre:</strong> {{ dueno.nombre }}</p>
+                <p><strong>RUT:</strong> {{ dueno.rut }}</p>
+                <p><strong>Contacto:</strong> {{ dueno.contacto }}</p>
+            {% else %}
+                <p>No se encontró dueño asociado.</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">Mascotas del Dueño</div>
+        <div class="card-body">
+            {% if mascotas %}
+                <ul class="list-group">
+                    {% for mascota in mascotas %}
+                        <li class="list-group-item">
+                            <a href="{% url 'ver_mascota' mascota.id %}">{{ mascota.nombre }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No hay mascotas registradas para este dueño.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
