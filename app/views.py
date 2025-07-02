@@ -133,8 +133,6 @@ def ver_dueno(request, user):
         for dueno in dueno:
             mascotas = Mascota.objects.filter(dueno=dueno)
 
-        print(f"Usuario: {usuario}, Dueño: {dueno}")
-
         context = {
             'usuario': usuario,
             'dueno': dueno,
