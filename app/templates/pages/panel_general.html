@@ -194,7 +194,7 @@
             </a>
             {% endif %}
             {% endif %}
-            <a href="" class="btn btn-sm btn-info">Ver usuario</a>
+            <a href="{% url 'ver_dueno' reserva.cliente.id %}" class="btn btn-sm btn-info">Ver usuario</a>
           </td>
         </tr>
         {% empty %}
